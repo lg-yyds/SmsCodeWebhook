@@ -1,0 +1,36 @@
+name: Docker	#名字随意
+
+on:
+  push: # push 到主分支自动 发布
+    branches: ["main"]
+    paths-ignore: # 忽略一些不必要的文件
+      - ".gitignore"
+      - "README.md"
+  pull_request:
+    branches: ["main"]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Build Docker image	# 打包镜像
+        run: |
+           TIMESTAMP=$(date +'%Y%m%d')
+           docker build -t yydsxll/scw:$TIMESTAMP .
+           docker tag yydsxll/scw:$TIMESTAMP yydsxll/scw:latest
+
+      - name: Login to Docker Hub	# 登录Docker Hub
+        uses: docker/login-action@v1
+        with:
+         username: ${{ secrets.DOCKERHUB_USERNAME }}
+         password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Push Docker image to Docker Hub	# 推送到Docker Hub
+        run: |
+         TIMESTAMP=$(date +'%Y%m%d')
+         docker push yydsxll/scw:latest
+         docker push yydsxll/scw:$TIMESTAMP
