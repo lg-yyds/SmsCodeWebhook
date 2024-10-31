@@ -17,7 +17,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Build Docker image	# 打包镜像
+      - name: Build Docker image	#  打包镜像
         run: |
            TIMESTAMP=$(date +'%Y%m%d')
            docker build -t yydsxll/scw:$TIMESTAMP .
